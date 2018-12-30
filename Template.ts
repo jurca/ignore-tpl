@@ -57,8 +57,8 @@ export default class Template {
         }
     }
 
-    public createInstance(): TemplateInstance {
-        return new TemplateInstance(this)
+    public createInstance(key?: any): TemplateInstance {
+        return new TemplateInstance(key, this)
     }
 }
 

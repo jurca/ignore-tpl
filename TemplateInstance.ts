@@ -3,10 +3,12 @@ import NodeFragment from './NodeFragment.js'
 import Template from './Template.js'
 
 export default class TemplateInstance {
+    public readonly key: any
     public readonly dom: DocumentFragment
     public readonly dynamicFragments: IDynamicFragment[]
 
-    constructor(template: Template) {
+    constructor(key: any, template: Template) {
+        this.key = key
         this.dom = document.importNode(template.domTemplate, true)
         this.dynamicFragments = template.dynamicFragments.map((declaration) => {
             const targetNode = this.evaluateNodePath(declaration.nodePath)
