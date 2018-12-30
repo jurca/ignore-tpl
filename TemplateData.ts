@@ -11,7 +11,7 @@ export default class TemplateData {
         this.placeholderValues = placeholderValues
     }
 
-    createTemplate(): Template {
+    public createTemplate(): Template {
         return new Template(this.templateSource)
     }
 }
