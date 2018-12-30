@@ -1,5 +1,5 @@
+import TemplateInstance from '../TemplateInstance.js'
 import IDynamicFragment from './IDynamicFragment.js'
-import TemplateInstance from './TemplateInstance.js'
 
 const EMPTY_FRAGMENT = document.createDocumentFragment()
 

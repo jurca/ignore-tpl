@@ -1,5 +1,5 @@
-import IDynamicFragment from './IDynamicFragment.js'
-import NodeFragment from './NodeFragment.js'
+import IDynamicFragment from './fragment/IDynamicFragment.js'
+import NodeFragment from './fragment/NodeFragment.js'
 import Template from './Template.js'
 
 export default class TemplateInstance {

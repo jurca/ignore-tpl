@@ -1,7 +1,7 @@
-import AttributeFragment from './AttributeFragment.js'
-import IDynamicFragment from './IDynamicFragment.js'
-import NodeFragment from './NodeFragment.js'
-import PropertyFragment from './PropertyFragment.js'
+import AttributeFragment from './fragment/AttributeFragment.js'
+import IDynamicFragment from './fragment/IDynamicFragment.js'
+import NodeFragment from './fragment/NodeFragment.js'
+import PropertyFragment from './fragment/PropertyFragment.js'
 import TemplateInstance from './TemplateInstance.js'
 
 const PLACEHOLDER_VALUE = '@@ingore-tpl-placeholder'
