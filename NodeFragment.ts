@@ -44,7 +44,7 @@ export default class NodeFragment implements IDynamicFragment {
         // NodeFragments by  inspecting which <TemplateInstance instance>.dynamicFragments elements (their indexes
         // reflex template value indexes) are NodeFragment instances.
         if (value instanceof TemplateInstance) {
-            return value.dom
+            return value.asDocumentFragment
         }
         return document.createTextNode(`${value}`)
     }
