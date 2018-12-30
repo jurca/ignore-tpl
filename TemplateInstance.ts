@@ -6,9 +6,11 @@ export default class TemplateInstance {
     public readonly key: any
     public readonly dom: Node[]
     public readonly dynamicFragments: IDynamicFragment[]
+    public readonly template: Template
 
     constructor(key: any, template: Template) {
         this.key = key
+        this.template = template
         const domInstance = template.domTemplate.cloneNode(true)
         this.dom = Array.from(domInstance.childNodes)
         this.dynamicFragments = template.dynamicFragments.map((declaration) => {

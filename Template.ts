@@ -5,7 +5,7 @@ import PropertyFragment from './fragment/PropertyFragment.js'
 import TemplateInstance from './TemplateInstance.js'
 
 const PLACEHOLDER_VALUE = '@@ingore-tpl-placeholder'
-const PLACEHOLDER = `<!--${PLACEHOLDER_VALUE}-->`
+export const PLACEHOLDER = `<!--${PLACEHOLDER_VALUE}-->`
 
 export default class Template {
     public readonly domTemplate: DocumentFragment
