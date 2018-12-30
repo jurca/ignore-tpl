@@ -6,6 +6,7 @@ const EMPTY_FRAGMENT = document.createDocumentFragment()
 export default class NodeFragment implements IDynamicFragment {
     private readonly start: null | Node
     private readonly end: Comment
+    private lastValue: any
 
     constructor(endNode: Comment) {
         this.start = endNode.previousSibling
@@ -13,6 +14,11 @@ export default class NodeFragment implements IDynamicFragment {
     }
 
     public setValue(value: any): void {
+        if (value === this.lastValue) {
+            return
+        }
+        this.lastValue = value
+
         const {end, start} = this
         const container = end.parentNode!
         while (end.previousSibling !== start) {
