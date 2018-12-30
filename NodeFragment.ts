@@ -1,6 +1,8 @@
 import IDynamicFragment from './IDynamicFragment.js'
 import TemplateInstance from './TemplateInstance.js'
 
+const EMPTY_FRAGMENT = document.createDocumentFragment()
+
 export default class NodeFragment implements IDynamicFragment {
     private readonly start: null | Node
     private readonly end: Comment
@@ -25,7 +27,7 @@ export default class NodeFragment implements IDynamicFragment {
 
     private prepareValue(value: any): Node {
         if (value === undefined || value === null) {
-            return document.createDocumentFragment()
+            return EMPTY_FRAGMENT
         }
         if (value instanceof Node) {
             return value
