@@ -1,6 +1,7 @@
 {
     "compilerOptions": {
         "allowUnreachableCode": false,
+        "declaration": true,
         "strictPropertyInitialization": true,
         "strictNullChecks": true,
         "target": "esnext"
