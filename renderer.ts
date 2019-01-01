@@ -6,6 +6,7 @@ import TemplateInstance from './TemplateInstance.js'
 const EMPTY_FRAGMENT = document.createDocumentFragment()
 
 const cache = new Map<string, ITemplateState>()
+const nodeFragmentValueCache = new WeakMap<NodeFragment, {lastValue: any, node: Node}>()
 
 export default function render(container: Element, templateData: TemplateData): void {
     const {template, instances} = getTemplateState(templateData)
@@ -29,7 +30,28 @@ export default function render(container: Element, templateData: TemplateData): 
 }
 
 function prepareValues(templateInstance: TemplateInstance, subTemplates: SubTemplatesMap, values: any[]): Node[] {
-    return values.map((value, index) => prepareValue(templateInstance, subTemplates, value, index))
+    return values.map((value, index) => memoizedPrepareValue(templateInstance, subTemplates, value, index))
+}
+
+function memoizedPrepareValue(
+    templateInstance: TemplateInstance,
+    subTemplates: SubTemplatesMap,
+    value: any,
+    index: number,
+): Node {
+    const currentFragment = templateInstance.dynamicFragments[index]
+    if (value instanceof Array || !(currentFragment instanceof NodeFragment)) {
+        return prepareValue(templateInstance, subTemplates, value, index)
+    }
+
+    const cacheEntry = nodeFragmentValueCache.get(currentFragment)
+    if (cacheEntry && cacheEntry.lastValue === value) {
+        return cacheEntry.node
+    }
+
+    const node = prepareValue(templateInstance, subTemplates, value, index)
+    nodeFragmentValueCache.set(currentFragment, {lastValue: value, node})
+    return node
 }
 
 function prepareValue(
@@ -38,7 +60,11 @@ function prepareValue(
     value: any,
     index: number,
 ): Node {
-    if (!(templateInstance.dynamicFragments[index] instanceof NodeFragment) || value instanceof Node) {
+    if (
+        value instanceof Node || // DOM nodes do not need any preparation
+        // Only NodeFragments need the value converted to a DOM Node
+        (index > -1 && !(templateInstance.dynamicFragments[index] instanceof NodeFragment))
+    ) {
         subTemplates.delete(index)
         return value
     }
@@ -65,7 +91,7 @@ function prepareArray(
     subTemplates: SubTemplatesMap,
     value: any[],
     index: number,
-): Node {
+): DocumentFragment {
     const elements = value.flat(Number.POSITIVE_INFINITY)
     const templateDataElements: TemplateData[] = elements.filter((element) => element instanceof TemplateData)
     const newKeys = new Set(
