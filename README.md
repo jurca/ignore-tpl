@@ -76,12 +76,12 @@ const view = tpl`
         >
         It's just HTML, self-closing elements are indeed self-closing.
         <button
-            .disabled=${
+            .disabled="${
                 // Use the .property notation to set JS properties of elements
                 // instead of attributes.
                 false
-            }
-            .onclick=${
+            }"
+            .onclick="${
                 (event) => console.log('clicked!', event)
                 /*
                     Use the DOM level 0 event listeners API, there is no
@@ -93,10 +93,11 @@ const view = tpl`
                     listeners for the capture phase or a passive event
                     listener.
                 */
-            }
+            }"
         >
             Click me!
         </button>
+        <button disabled="${null /* Setting an attribute to null or undefined removes it */}">No-op button</button>
     </div>
     <p>
         You can have as many top-level nodes as you want without using any
