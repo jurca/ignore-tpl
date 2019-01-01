@@ -1,6 +1,6 @@
 import IDynamicFragment from './fragment/IDynamicFragment.js'
 import NodeFragment from './fragment/NodeFragment.js'
-import Template from './Template.js'
+import Template, {PLACEHOLDER_ATTRIBUTE} from './Template.js'
 
 export default class TemplateInstance {
     public readonly key: any
@@ -11,14 +11,18 @@ export default class TemplateInstance {
     constructor(key: any, template: Template) {
         this.key = key
         this.template = template
-        const domInstance = template.domTemplate.cloneNode(true)
+        const domInstance = template.domTemplate.cloneNode(true) as DocumentFragment
         this.dom = Array.from(domInstance.childNodes)
+        const dynamicNodes = Array.from(domInstance.querySelectorAll(`[${PLACEHOLDER_ATTRIBUTE}]`))
         this.dynamicFragments = template.dynamicFragments.map((declaration) => {
-            const targetNode = this.evaluateNodePath(domInstance, declaration.nodePath)
+            const targetNode = dynamicNodes[declaration.nodeIndex]
             if (declaration.type === NodeFragment) {
-                return new declaration.type(targetNode as Comment)
+                const fragmentMarker = document.createComment('')
+                targetNode.parentNode!.replaceChild(fragmentMarker, targetNode)
+                return new declaration.type(fragmentMarker)
             }
             const constructor = declaration.type as new (element: Element, meta: string) => IDynamicFragment
+            targetNode.removeAttribute(PLACEHOLDER_ATTRIBUTE)
             return new constructor(targetNode as Element, declaration.target)
         })
     }
@@ -33,14 +37,6 @@ export default class TemplateInstance {
         const result = document.createDocumentFragment()
         for (const node of this.dom) {
             result.appendChild(node)
-        }
-        return result
-    }
-
-    private evaluateNodePath(rootNode: Node, nodePath: number[]): Node {
-        let result: Node = rootNode
-        for (const childIndex of nodePath) {
-            result = result.childNodes[childIndex]
         }
         return result
     }
