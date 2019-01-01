@@ -2,6 +2,8 @@
     "compilerOptions": {
         "allowUnreachableCode": false,
         "declaration": true,
+        "inlineSources": true,
+        "sourceMap": true,
         "strictPropertyInitialization": true,
         "strictNullChecks": true,
         "target": "esnext"
