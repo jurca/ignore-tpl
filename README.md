@@ -70,6 +70,8 @@ const view = tpl`
                 } does not work (and is not really needed anyway)"
             srcset="${
                 `This is the correct way of composing static value if ${'dynamic ones'} in attributes`
+                // Please note that attributes with dynamic values must use
+                // double quotes (").
             }"
         >
         It's just HTML, self-closing elements are indeed self-closing.
