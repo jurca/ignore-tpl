@@ -7,6 +7,15 @@ import TemplateInstance from './TemplateInstance.js'
 const PLACEHOLDER_VALUE = '@@ingore-tpl-placeholder'
 export const PLACEHOLDER = `<!--${PLACEHOLDER_VALUE}-->`
 
+// TODO: PLACEHOLDER =
+// <-x-ignore-tpl-placeholder data-x-ignore-tpl-placeholder></-x-ignore-tpl-placeholder>" data-x-ignore-tpl-placeholder="<!---->
+
+// <div></div>
+// <div><-x-ignore-tpl-placeholder data-x-ignore-tpl-placeholder></-x-ignore-tpl-placeholder>" data-x-ignore-tpl-placeholder="<!----></div>
+
+// <div class=""></div>
+// <div class="<-x-ignore-tpl-placeholder data-x-ignore-tpl-placeholder></-x-ignore-tpl-placeholder>" data-x-ignore-tpl-placeholder="<!---->"></div>
+
 export default class Template {
     public readonly domTemplate: DocumentFragment
     public readonly dynamicFragments: IDynamicFragmentDeclaration[]
