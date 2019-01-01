@@ -1,7 +1,4 @@
-import TemplateInstance from '../TemplateInstance.js'
 import IDynamicFragment from './IDynamicFragment.js'
-
-const EMPTY_FRAGMENT = document.createDocumentFragment()
 
 export default class NodeFragment implements IDynamicFragment {
     private readonly start: null | Node
