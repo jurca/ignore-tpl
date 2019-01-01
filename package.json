@@ -5,7 +5,7 @@
   "main": "tpl.js",
   "scripts": {
     "compile": "tsc --outDir dist",
-    "test": "tslint --project ."
+    "test": "tslint --project . && jest"
   },
   "repository": {
     "type": "git",
@@ -23,6 +23,9 @@
   },
   "homepage": "https://github.com/jurca/ignore-tpl#readme",
   "devDependencies": {
+    "@types/jest": "^23.3.11",
+    "jest": "^23.6.0",
+    "ts-jest": "^23.10.5",
     "tslint": "^5.12.0",
     "typescript": "^3.2.2"
   }
