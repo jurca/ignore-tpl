@@ -14,7 +14,7 @@ export default class Template {
     public readonly domTemplate: DocumentFragment
     public readonly dynamicFragments: IDynamicFragmentDeclaration[]
 
-    constructor(source: string[]) {
+    constructor(source: TemplateStringsArray) {
         const template = document.createElement('template')
         template.innerHTML = source.join(PLACEHOLDER)
         this.domTemplate = template.content
