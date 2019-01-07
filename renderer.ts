@@ -75,6 +75,9 @@ function prepareValue(
     }
 
     if (value instanceof TemplateData) {
+        if (value.key === undefined) {
+            value = new TemplateData({}, value.templateSource, value.placeholderValues)
+        }
         value = [value]
     }
 
