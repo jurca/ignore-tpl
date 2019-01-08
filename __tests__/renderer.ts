@@ -92,9 +92,55 @@ describe('renderer', () => {
         expect(container.appendChild).toHaveBeenCalledTimes(1)
     })
 
-    xit('should insert the dom nodes of the root template instace into the container only once', () => {})
+    it('should insert the dom nodes of the root template instace into the container only once', () => {
+        const container = document.createElement('div')
+        const appendChild = spyOn(container, 'appendChild')
+        render(container, tpl`
+            <div>foo</div>
+        `)
+        render(container, tpl`
+            <div>foo</div>
+        `)
+        expect(appendChild).toHaveBeenCalledTimes(1)
+    })
 
-    xit('should only use the template instance\s setValues method for sub-sequent renders', () => {})
+    it('should only use the template instance\s setValues method for sub-sequent renders', () => {
+        const container = document.createElement('div')
+        render(container, tpl`<div class="${'foo'}"></div>`)
+        const appendChildRoot = spyOn(container, 'appendChild')
+        const replaceChildRoot = spyOn(container, 'replaceChild')
+        const removeChildRoot = spyOn(container, 'removeChild')
+        const insertBeforeRoot = spyOn(container, 'insertBefore')
+        const appendChildContent = spyOn(container.childNodes[0], 'appendChild')
+        const replaceChildContent = spyOn(container.childNodes[0], 'replaceChild')
+        const removeChildContent = spyOn(container.childNodes[0], 'removeChild')
+        const insertBeforeContent = spyOn(container.childNodes[0], 'insertBefore')
+        const setAttributeContent = spyOn(container.childNodes[0] as HTMLElement, 'setAttribute')
+        render(container, tpl`<div class="${'bar'}"></div>`)
+        expect(appendChildRoot).toHaveBeenCalledTimes(0)
+        expect(replaceChildRoot).toHaveBeenCalledTimes(0)
+        expect(removeChildRoot).toHaveBeenCalledTimes(0)
+        expect(insertBeforeRoot).toHaveBeenCalledTimes(0)
+        expect(appendChildContent).toHaveBeenCalledTimes(0)
+        expect(replaceChildContent).toHaveBeenCalledTimes(0)
+        expect(removeChildContent).toHaveBeenCalledTimes(0)
+        expect(insertBeforeContent).toHaveBeenCalledTimes(0)
+        expect(setAttributeContent).toHaveBeenCalledTimes(1)
+    })
+
+    it('should remove the original root template instance DOM if the template changes', () => {
+        const container = document.createElement('div')
+        container.appendChild(document.createElement('p'))
+        container.appendChild(document.createTextNode('foo  '))
+        render(container, tpl`
+            bar
+            <div>baz</div>
+        `)
+        expect(container.childNodes.length).toBe(5)
+
+        render(container, tpl` <p>test</p>`)
+        expect(container.innerHTML).toBe('<p></p>foo   <p>test</p>')
+    })
 
     xit('should pass the values to attributes and properties without modifications', () => {})
 

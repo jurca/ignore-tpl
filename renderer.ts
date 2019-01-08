@@ -6,6 +6,7 @@ import TemplateInstance from './TemplateInstance.js'
 const EMPTY_FRAGMENT = document.createDocumentFragment()
 
 const cache = new Map<string, ITemplateState>()
+const containersToTemplateInstances = new WeakMap<Element, TemplateInstance>()
 const nodeFragmentValueCache = new WeakMap<NodeFragment, {lastValue: any, node: Node}>()
 
 export default function render(container: Element, templateData: TemplateData): void {
@@ -25,7 +26,18 @@ export default function render(container: Element, templateData: TemplateData): 
     templateInstance.setValues(prepareValues(templateInstance, subTemplates, templateData.placeholderValues))
 
     if (newTemplateInstanceNeeded) {
+        if (containersToTemplateInstances.has(container)) {
+            const previousTemplateInstance = containersToTemplateInstances.get(container)!
+            for (const node of previousTemplateInstance.dom) {
+                container.removeChild(node)
+            }
+            const {instances: previousTemplateInstances} = getTemplateState(
+                new TemplateData(undefined, template.source, []),
+            )
+            previousTemplateInstances.delete(container)
+        }
         container.appendChild(templateInstance.asDocumentFragment)
+        containersToTemplateInstances.set(container, templateInstance)
     }
 }
 

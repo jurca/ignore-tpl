@@ -11,10 +11,12 @@ const PLACEHOLDER_NODE_NAME = PLACEHOLDER_PATTERN.toUpperCase()
 export const PLACEHOLDER = `${PLACEHOLDER_ELEMENT}" ${PLACEHOLDER_ATTRIBUTE}="<!---->`
 
 export default class Template {
+    public readonly source: TemplateStringsArray
     public readonly domTemplate: DocumentFragment
     public readonly dynamicFragments: IDynamicFragmentDeclaration[]
 
     constructor(source: TemplateStringsArray) {
+        this.source = source
         const template = document.createElement('template')
         template.innerHTML = source.join(PLACEHOLDER)
         this.domTemplate = template.content
