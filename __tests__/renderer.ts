@@ -174,7 +174,21 @@ describe('renderer', () => {
         )
     })
 
-    xit('should support rendering DOM nodes in node fragments', () => {})
+    it('should support rendering DOM nodes in node fragments', () => {
+        const container = document.createElement('div')
+        const nodeValue = document.createDocumentFragment()
+        nodeValue.appendChild(document.createElement('div'))
+        nodeValue.appendChild(document.createTextNode('foo'))
+        nodeValue.appendChild(document.createElement('p'))
+        nodeValue.appendChild(document.createComment('bar'))
+        nodeValue.appendChild(document.createTextNode('baz'))
+        render(container, tpl`
+            <div>${nodeValue}</div>
+        `)
+        expect(container.innerHTML).toBe(
+            '\n            <div><div></div>foo<p></p><!--bar-->baz<!----></div>\n        ',
+        )
+    })
 
     xit('should support rendering templates in node fragments and cache them if and only if they are keyed', () => {})
 
