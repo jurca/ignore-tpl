@@ -142,9 +142,37 @@ describe('renderer', () => {
         expect(container.innerHTML).toBe('<p></p>foo   <p>test</p>')
     })
 
-    xit('should pass the values to attributes and properties without modifications', () => {})
+    it('should pass the values to attributes and properties without modifications', () => {
+        const container = document.createElement('div')
+        render(container, tpl`
+            <div class="${'foo'}" .onclick="${() => 0}"></div>
+        `)
+        const attrValue = {}
+        const callback = () => 1
+        const setAttribute = spyOn(container.firstElementChild!, 'setAttribute')
+        Object.defineProperty(container.firstElementChild!, 'onclick', {
+            set: jest.fn((value) => {
+                expect(value).toBe(callback)
+            }),
+        })
+        render(container, tpl`
+            <div class="${attrValue}" .onclick="${callback}"></div>
+        `)
+        expect(setAttribute).toHaveBeenCalledWith('class', attrValue)
+        expect(Object.getOwnPropertyDescriptor(container.firstElementChild!, 'onclick')!.set).toHaveBeenCalledTimes(1)
+    })
 
-    xit('should support rendering of strings, numbers, booleans, nulls and undefines in node fragments', () => {})
+    it('should support rendering of strings, numbers, booleans, nulls and undefines in node fragments', () => {
+        const container = document.createElement('div')
+        render(container, tpl`
+            <div>${'foo'}</div><p>${123.456}</p><div>${true}</div><p>${false}</p><small>${null}</small>
+            <big>${undefined}</big>
+        `)
+        expect(container.innerHTML).toBe(
+            '\n            <div>foo<!----></div><p>123.456<!----></p><div>true<!----></div><p>false<!----></p>' +
+            '<small><!----></small>\n            <big><!----></big>\n        ',
+        )
+    })
 
     xit('should support rendering DOM nodes in node fragments', () => {})
 
