@@ -108,4 +108,24 @@ describe('TemplateInstace', () => {
     )
     expect((instance.dom[2].childNodes[1] as HTMLButtonElement).onclick).toBe(callback)
   })
+
+  it('should handle root-level node fragments in both mounted and unmounted instances', () => {
+    const currentSources: TemplateStringsArray = [
+      '',
+      '<div></div>',
+      '<p></p>',
+      '',
+    ] as any
+    (currentSources as any).raw = currentSources
+    const currentTemplate = new Template(currentSources)
+    const instance = currentTemplate.createInstance(0)
+
+    const container = document.createElement('div')
+    instance.setValues([document.createTextNode('foo'), document.createTextNode('bar'), document.createTextNode('baz')])
+    container.appendChild(instance.asDocumentFragment)
+    expect(container.innerHTML).toBe('foo<!----><div></div>bar<!----><p></p>baz<!---->')
+
+    instance.setValues([document.createElement('main'), document.createElement('b'), document.createElement('i')])
+    expect(container.innerHTML).toBe('<main></main><!----><div></div><b></b><!----><p></p><i></i><!---->')
+  })
 })
