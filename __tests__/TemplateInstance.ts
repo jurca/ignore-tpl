@@ -9,7 +9,7 @@ describe('TemplateInstace', () => {
 
   const sources: TemplateStringsArray = [
     '<div><!-- my testing comment -->',
-    '</div><div>', // jsdom incorrectly resolves the parent node of the second placeholder if it is top-level
+    '</div><div>',
     '</div><div><p class="foo" id="',
     '" title="',
     '">',
