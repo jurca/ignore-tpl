@@ -4,10 +4,11 @@ import Template, {PLACEHOLDER_ATTRIBUTE} from './Template.js'
 
 export default class TemplateInstance {
     public readonly key: any
-    public readonly dynamicFragments: IDynamicFragment[]
+    public readonly dynamicFragments: ReadonlyArray<IDynamicFragment>
     public readonly template: Template
-    private readonly staticDom: Node[]
-    private currentDom: Node[]
+    private readonly staticDom: ReadonlyArray<Node>
+    private cachedCurrentDom: null | ReadonlyArray<Node> = null
+    private currentPlaceholderValues: ReadonlyArray<any> = []
 
     constructor(key: any, template: Template) {
         this.key = key
@@ -26,36 +27,43 @@ export default class TemplateInstance {
             return new constructor(targetNode as Element, declaration.target)
         })
         this.staticDom = Array.from(domInstance.childNodes)
-        this.currentDom = this.staticDom
     }
 
-    public get dom(): Node[] {
-        return this.currentDom
+    public get dom(): ReadonlyArray<Node> {
+        if (this.cachedCurrentDom) {
+            return this.cachedCurrentDom
+        }
+
+        if (!this.staticDom.length) {
+            this.cachedCurrentDom = []
+            return this.cachedCurrentDom
+        }
+
+        const nodeValues = new Set(this.currentPlaceholderValues.filter((value) => value instanceof Node))
+        let startNode = this.staticDom[0]
+        while (nodeValues.has(startNode.previousSibling)) {
+            startNode = startNode.previousSibling!
+        }
+
+        const result: Node[] = []
+        let currentNode = startNode
+        const lastNode = this.staticDom[this.staticDom.length - 1]
+        while (currentNode !== lastNode) {
+            result.push(currentNode)
+            currentNode = currentNode.nextSibling!
+        }
+        result.push(lastNode)
+
+        this.cachedCurrentDom = result
+        return result
     }
 
     public setValues(placeholderValues: any[]): void {
         for (let i = 0; i < placeholderValues.length; i++) {
             this.dynamicFragments[i].setValue(placeholderValues[i])
         }
-
-        if (!this.staticDom.length) {
-            return
-        }
-
-        const nodeValues = new Set(placeholderValues.filter((value) => value instanceof Node))
-        let startNode = this.staticDom[0]
-        while (nodeValues.has(startNode.previousSibling)) {
-            startNode = startNode.previousSibling!
-        }
-
-        this.currentDom = []
-        let currentNode = startNode
-        const lastNode = this.staticDom[this.staticDom.length - 1]
-        while (currentNode !== lastNode) {
-            this.currentDom.push(currentNode)
-            currentNode = currentNode.nextSibling!
-        }
-        this.currentDom.push(lastNode)
+        this.currentPlaceholderValues = placeholderValues
+        this.cachedCurrentDom = null
     }
 
     public get asDocumentFragment(): DocumentFragment {
