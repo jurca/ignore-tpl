@@ -237,7 +237,71 @@ describe('renderer', () => {
         render(document.createElement('div'), tpl`<div>${[keyed(0)`<p></p>`]}</div>`)
     })
 
-    xit('should cache the template instances by their keys in arrays rendered in node fragments', () => {})
+    it('should cache the template instances by their keys in arrays rendered in node fragments', () => {
+        const container = document.createElement('div')
+        render(container, tpl`
+            <ul>
+                ${[
+                    keyed(0)`<li>${0}</li>`,
+                    keyed(1)`<li>${1}</li>`,
+                    keyed(2)`<li>
+                        ${[
+                            keyed(0)`<span>${0}</span>`,
+                            keyed(1)`<span>${1}</span>`,
+                        ]}
+                    </li>`,
+                ]}
+            </ul>
+        `)
+        expect(container.innerHTML).toBe(
+            '\n            <ul>\n                <li>0<!----></li><li>1<!----></li>' +
+            '<li>\n                        ' +
+            '<span>0<!----></span><span>1<!----></span><!---->' +
+            '\n                    </li><!---->\n            </ul>\n        ',
+        )
+        const liElements = Array.from(container.querySelectorAll('li'))
+        const spanElements = Array.from(container.querySelectorAll('span'))
+
+        render(container, tpl`
+            <ul>
+                ${[
+                    keyed(-1)`<li>${-1}</li>`,
+                    keyed(0)`<li>${0}</li>`,
+                    keyed(1)`<li>${1}</li>`,
+                    keyed('1.5')`<li>${'1.5'}</li>`,
+                    keyed(2)`<li>
+                        ${[
+                            keyed(0)`<span>${0}</span>`,
+                            keyed(1)`<span>${1}</span>`,
+                            keyed(2)`<span>${2}</span>`,
+                        ]}
+                    </li>`,
+                    keyed(3)`<li>${3}</li>`,
+                ]}
+            </ul>
+        `)
+        expect(container.innerHTML).toBe(
+            '\n            <ul>\n                ' +
+            '<li>-1<!----></li><li>0<!----></li><li>1<!----></li><li>1.5<!----></li><li>\n                        ' +
+            '<span>0<!----></span><span>1<!----></span><span>2<!----></span><!---->' +
+            '\n                    </li><li>3<!----></li><!---->\n            ' +
+            '</ul>\n        ',
+        )
+        const currentLiElements = Array.from(container.querySelectorAll('li'))
+        const currentSpanElements = Array.from(container.querySelectorAll('span'))
+
+        expect(currentLiElements[1]).toBe(liElements[0])
+        expect(currentLiElements[2]).toBe(liElements[1])
+        expect(currentLiElements[4]).toBe(liElements[2])
+        expect(currentSpanElements[0]).toBe(spanElements[0])
+        expect(currentSpanElements[1]).toBe(spanElements[1])
+
+        expect(liElements.includes(currentLiElements[0])).toBe(false)
+        expect(liElements.includes(currentLiElements[3])).toBe(false)
+        expect(liElements.includes(currentLiElements[5])).toBe(false)
+
+        expect(spanElements.includes(currentSpanElements[2])).toBe(false)
+    })
 
     xit('should drop the cached template instances of array elements that were removed', () => {})
 
