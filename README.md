@@ -133,7 +133,7 @@ const view = tpl`
             `)}
         </ul>
     </p>
-    <!-- comments are supported too, just cannot have content -->
+    <!-- comments are supported too, just cannot have dynamic content -->
 `
 
 // The view variable contains only the provided template source and values,
