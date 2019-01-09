@@ -303,9 +303,127 @@ describe('renderer', () => {
         expect(spanElements.includes(currentSpanElements[2])).toBe(false)
     })
 
-    xit('should drop the cached template instances of array elements that were removed', () => {})
+    it('should handle rendering the same template with the same key nested inside itself', () => {
+        const container = document.createElement('div')
+        render(container, tpl`<div>${keyed(0)`<div>${keyed(0)`<div>${keyed(0)`<div>${0}</div>`}</div>`}</div>`}</div>`)
+        expect(container.innerHTML).toBe(
+            '<div><div><div><div>0<!----></div><!----></div><!----></div><!----></div>',
+        )
+    })
 
-    xit('should handle replacing the template in array with another template with the same key', () => {})
+    it('should drop the cached template instances of array elements that were removed', () => {
+        const container = document.createElement('div')
+        render(container, tpl`
+            <ul>
+                ${[
+                    keyed(1)`<li></li>`,
+                ]}
+            </ul>
+        `)
+        expect(container.innerHTML).toBe(
+            '\n            <ul>\n                <li></li><!---->\n            </ul>\n        ',
+        )
+        const firstLiElement = container.querySelector('li')
 
-    xit('should set the values of sub-templates when rendering', () => {})
+        render(container, tpl`
+            <ul>
+                ${[]}
+            </ul>
+        `)
+        expect(container.innerHTML).toBe('\n            <ul>\n                <!---->\n            </ul>\n        ')
+
+        render(container, tpl`
+            <ul>
+                ${[
+                    keyed(1)`<li></li>`,
+                ]}
+            </ul>
+        `)
+        expect(container.innerHTML).toBe(
+            '\n            <ul>\n                <li></li><!---->\n            </ul>\n        ',
+        )
+        const secondLiElement = container.querySelector('li')
+        expect(secondLiElement).not.toBe(firstLiElement)
+    })
+
+    it('should handle replacing the template in array with another template with the same key', () => {
+        const container = document.createElement('div')
+        render(container, tpl`
+            <div>${[keyed(0)`<p></p>`]}</div>
+        `)
+        expect(container.innerHTML).toBe('\n            <div><p></p><!----></div>\n        ')
+
+        render(container, tpl`
+            <div>${[keyed(0)`<span></span>`]}</div>
+        `)
+        expect(container.innerHTML).toBe('\n            <div><span></span><!----></div>\n        ')
+    })
+
+    it('should set the values of sub-templates when rendering', () => {
+        const container = document.createElement('div')
+        render(container, tpl`
+            <ul>
+                ${[
+                    keyed(0)`<li>${0}</li>`,
+                    keyed(1)`<li>
+                        ${[
+                            keyed(0)`<span>${'a'}</span>`,
+                            keyed(1)`<span>${'b'}</span>`,
+                        ]}
+                    </li>`,
+                    keyed(2)`<li>${2}</li>`,
+                ]}
+            </ul>
+        `)
+        expect(container.innerHTML).toBe(
+            '\n            <ul>\n                <li>0<!----></li><li>\n                        ' +
+            '<span>a<!----></span><span>b<!----></span><!---->\n                    </li><li>2<!----></li><!---->' +
+            '\n            </ul>\n        ',
+        )
+        const firstLiElements = Array.from(container.querySelectorAll('li'))
+        const firstSpanElements = Array.from(container.querySelectorAll('span'))
+
+        render(container, tpl`
+            <ul>
+                ${[
+                    keyed(0)`<li>${1}</li>`,
+                    keyed(1)`<li>
+                        ${[
+                            keyed(0)`<span>${'c'}</span>`,
+                            keyed(1)`<span>${'d'}</span>`,
+                        ]}
+                    </li>`,
+                    keyed(2)`<li>${3}</li>`,
+                ]}
+            </ul>
+        `)
+        expect(container.innerHTML).toBe(
+            '\n            <ul>\n                <li>1<!----></li><li>\n                        ' +
+            '<span>c<!----></span><span>d<!----></span><!---->\n                    </li><li>3<!----></li><!---->' +
+            '\n            </ul>\n        ',
+        )
+        const secondLiElements = Array.from(container.querySelectorAll('li'))
+        const secondSpanElements = Array.from(container.querySelectorAll('span'))
+
+        for (let i = 0; i < firstLiElements.length; i++) {
+            expect(firstLiElements[i]).toBe(secondLiElements[i])
+        }
+        for (let i = 0; i < firstSpanElements.length; i++) {
+            expect(firstSpanElements[i]).toBe(secondSpanElements[i])
+        }
+    })
+
+    it('should reject using the same template key multiple times in the same array', () => {
+        const container = document.createElement('div')
+        expect(() => {
+            render(container, tpl`
+                <ul>
+                    ${[
+                        keyed(0)`<li></li>`,
+                        keyed(0)`<li></li>`,
+                    ]}
+                </ul>
+            `)
+        }).toThrowError(Error)
+    })
 })
