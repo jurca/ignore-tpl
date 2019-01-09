@@ -190,13 +190,54 @@ describe('renderer', () => {
         )
     })
 
-    xit('should support rendering templates in node fragments and cache them if and only if they are keyed', () => {})
+    it('should support rendering templates in node fragments and cache them if and only if they are keyed', () => {
+        const container = document.createElement('div')
+        render(container, tpl`<div>${tpl`<p></p>`}</div>`)
+        expect(container.innerHTML).toBe('<div><p></p><!----></div>')
+        const injectedParagraph = container.firstChild!.firstChild!
+        expect(injectedParagraph.nodeName).toBe('P')
+        render(container, tpl`<div>${tpl`<p></p>`}</div>`)
+        const currentParagraph = container.firstChild!.firstChild
+        expect(currentParagraph).not.toBe(injectedParagraph)
 
-    xit('should support rendering of array containing primitive values and templates in node fragments', () => {})
+        render(container, tpl`<div>${keyed(null)`<span></span>`}</div>`)
+        const injectedContainer = container.firstChild!.firstChild!
+        expect(injectedContainer.nodeName).toBe('SPAN')
+        render(container, tpl`<div>${keyed(null)`<span></span>`}</div>`)
+        const currentContainer = container.firstChild!.firstChild
+        expect(currentContainer).toBe(injectedContainer)
+    })
 
-    xit('should reject rendering of unkeyed templates in arrays in node fragments', () => {})
+    it('should support rendering of array containing primitive values and templates in node fragments', () => {
+        const container = document.createElement('div')
+        render(container, tpl`
+            <div>
+                ${[
+                    true,
+                    false,
+                    123.456,
+                    'lorem ipsum',
+                    null,
+                    undefined,
+                    ' dolor sit amet.',
+                    keyed(null)`<p>${0}</p>`,
+                ]}
+            </div>
+        `)
+        expect(container.innerHTML).toBe(
+            '\n            <div>\n                truefalse123.456lorem ipsum dolor sit amet.<p>0<!----></p>' +
+            '<!---->\n            </div>\n        ',
+        )
+    })
 
-    xit('should cache the template instances by their keyes in arrays rendered in node fragments', () => {})
+    it('should reject rendering of unkeyed templates in arrays in node fragments', () => {
+        expect(() => {
+            render(document.createElement('div'), tpl`<div>${[tpl`<p></p>`]}</div>`)
+        }).toThrowError(Error)
+        render(document.createElement('div'), tpl`<div>${[keyed(0)`<p></p>`]}</div>`)
+    })
+
+    xit('should cache the template instances by their keys in arrays rendered in node fragments', () => {})
 
     xit('should drop the cached template instances of array elements that were removed', () => {})
 
