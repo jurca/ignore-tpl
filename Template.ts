@@ -14,15 +14,16 @@ export default class Template {
     public readonly source: TemplateStringsArray
     public readonly domTemplate: DocumentFragment
     public readonly dynamicFragments: IDynamicFragmentDeclaration[]
+    public readonly hasDynamicRootNodes: boolean
 
     constructor(source: TemplateStringsArray) {
         this.source = source
         const template = document.createElement('template')
         template.innerHTML = source.join(PLACEHOLDER)
         this.domTemplate = template.content
-        this.dynamicFragments = setUpDynamicFragments(
-            Array.from(this.domTemplate.querySelectorAll(`[${PLACEHOLDER_ATTRIBUTE}]`)),
-        )
+        const placeholders = Array.from(this.domTemplate.querySelectorAll(`[${PLACEHOLDER_ATTRIBUTE}]`))
+        this.hasDynamicRootNodes = placeholders.some((node) => node.parentNode === this.domTemplate)
+        this.dynamicFragments = setUpDynamicFragments(placeholders)
     }
 
     public createInstance(key?: any): TemplateInstance {

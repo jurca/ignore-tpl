@@ -27,6 +27,9 @@ export default class TemplateInstance {
             return new constructor(targetNode as Element, declaration.target)
         })
         this.staticDom = Array.from(domInstance.childNodes)
+        if (!template.hasDynamicRootNodes) {
+          this.cachedCurrentDom = this.staticDom
+        }
     }
 
     public get dom(): ReadonlyArray<Node> {
@@ -63,7 +66,9 @@ export default class TemplateInstance {
             this.dynamicFragments[i].setValue(placeholderValues[i])
         }
         this.currentPlaceholderValues = placeholderValues
-        this.cachedCurrentDom = null
+        if (this.template.hasDynamicRootNodes) {
+          this.cachedCurrentDom = null
+        }
     }
 
     public get asDocumentFragment(): DocumentFragment {
