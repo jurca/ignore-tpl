@@ -42,6 +42,10 @@ export default class TemplateInstance {
             return this.cachedCurrentDom
         }
 
+        // Note: while it is tempting to use slice() on the childNodes of our static DOM's current parent, there is no
+        // efficient way of getting the index of a node among the childNodes and the parent may contain a lot of child
+        // nodes before our nodes.
+
         const nodeValues = new Set(this.currentPlaceholderValues.filter((value) => value instanceof Node))
         let startNode = this.staticDom[0]
         while (nodeValues.has(startNode.previousSibling)) {
