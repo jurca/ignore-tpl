@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Test of animation in keyed sub-templates</title>
+        <style>
+            li {
+                position: relative;
+
+                padding: 0 0 0 20px;
+            }
+
+            li::before {
+                display: block;
+
+                position: absolute;
+                left: 0;
+                top: 0;
+
+                width: 2px;
+                height: 0.5em;
+
+                content: '';
+
+                background: black;
+
+                animation: anim 4s linear 0s infinite;
+                transform-origin: center bottom;
+            }
+
+            @keyframes anim {
+                0% {
+                    transform: rotate(0);
+                }
+
+                100% {
+                    transform: rotate(360deg);
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <div id="app"></div>
+        <hr>
+        <div id="react-app"></div>
+
+        <script src="https://unpkg.com/react@16/umd/react.development.js" crossorigin></script>
+        <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js" crossorigin></script>
+        <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+
+        <script type="module">
+            import keyed from '../dist/keyed.js'
+            import tpl from '../dist/tpl.js'
+            import render from '../dist/renderer.js'
+
+            const elements = [0, 1, 2]
+
+            updateUI()
+
+            function onPrependElement() {
+                injectNewElement(0)
+            }
+
+            function onAppendElement() {
+                injectNewElement(elements.length)
+            }
+
+            function onSpliceElement() {
+                injectNewElement(parseInt(document.getElementById('spliceIndex').value))
+            }
+
+            function onReverse() {
+                elements.reverse()
+                updateUI()
+            }
+
+            function injectNewElement(index) {
+                elements.splice(index, 0, elements.length)
+                updateUI()
+            }
+            
+            function updateUI() {
+                render(document.getElementById('app'), tpl`
+                <div>
+                    <button .onclick="${onPrependElement}">prepend element</button>
+                        <button .onclick="${onAppendElement}">append element</button>
+                        <button .onclick="${onSpliceElement}">splice element at position:</button>
+                        <button .onclick="${onReverse}">reverse elements</button>
+                        <input type="number" value="1" id="spliceIndex">
+                        </div>
+                    <ul>
+                        ${elements.map(value => keyed(value)`
+                            <li>${value}</li>
+                        `)}
+                        </ul>
+                `)
+                if (window.onUpdateReactApp) {
+                    window.onUpdateReactApp(elements)
+                } else {
+                    setTimeout(() => window.onUpdateReactApp(elements), 100)
+                }
+            }
+        </script>
+
+<script type="text/babel">
+            function ElementsList({elements}) {
+                return (
+                    <ul>
+                        {elements.map(value =>
+                            <li key={value}>{value}</li>
+                        )}
+                    </ul>
+                )
+            }
+
+            window.onUpdateReactApp = (elements) => {
+                ReactDOM.render(<ElementsList elements={elements}/>, document.getElementById('react-app'))
+            }
+        </script>
+    </body>
+</html>

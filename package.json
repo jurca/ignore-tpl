@@ -5,7 +5,8 @@
   "main": "tpl.js",
   "scripts": {
     "compile": "tsc --outDir dist",
-    "test": "tslint --project . && jest"
+    "test": "tslint --project . && jest",
+    "start:devserver": "serve"
   },
   "repository": {
     "type": "git",
@@ -25,6 +26,7 @@
   "devDependencies": {
     "@types/jest": "^23.3.11",
     "jest": "^23.6.0",
+    "serve": "^10.1.1",
     "ts-jest": "^23.10.5",
     "tslint": "^5.12.0",
     "typescript": "^3.2.2"
