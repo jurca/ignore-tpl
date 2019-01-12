@@ -6,10 +6,10 @@ import TemplateInstance from './TemplateInstance.js'
 const EMPTY_FRAGMENT = document.createDocumentFragment()
 
 const cache = new Map<string, ITemplateState>()
-const containersToTemplateInstances = new WeakMap<Element, TemplateInstance>()
+const containersToTemplateInstances = new WeakMap<Element | ShadowRoot, TemplateInstance>()
 const nodeFragmentValueCache = new WeakMap<NodeFragment, {lastValue: any, node: Node | Node[]}>()
 
-export default function render(container: Element, templateData: TemplateData): void {
+export default function render(container: Element | ShadowRoot, templateData: TemplateData): void {
     const {template, instances} = getTemplateState(templateData)
     const newTemplateInstanceNeeded = !instances.has(container)
     if (newTemplateInstanceNeeded) {
@@ -185,7 +185,7 @@ type SubTemplatesMap = Map<number, Map<any, IInstanceState>> // placeholder inde
 
 interface ITemplateState {
     template: Template
-    instances: WeakMap<Element, IInstanceState>
+    instances: WeakMap<Element | ShadowRoot, IInstanceState>
 }
 
 interface IInstanceState {
