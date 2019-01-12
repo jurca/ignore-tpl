@@ -7,7 +7,7 @@ const EMPTY_FRAGMENT = document.createDocumentFragment()
 
 const cache = new Map<string, ITemplateState>()
 const containersToTemplateInstances = new WeakMap<Element, TemplateInstance>()
-const nodeFragmentValueCache = new WeakMap<NodeFragment, {lastValue: any, node: Node}>()
+const nodeFragmentValueCache = new WeakMap<NodeFragment, {lastValue: any, node: Node | Node[]}>()
 
 export default function render(container: Element, templateData: TemplateData): void {
     const {template, instances} = getTemplateState(templateData)
@@ -41,7 +41,11 @@ export default function render(container: Element, templateData: TemplateData): 
     }
 }
 
-function prepareValues(templateInstance: TemplateInstance, subTemplates: SubTemplatesMap, values: any[]): Node[] {
+function prepareValues(
+    templateInstance: TemplateInstance,
+    subTemplates: SubTemplatesMap,
+    values: any[],
+): Array<Node | Node[]> {
     return values.map((value, index) => memoizedPrepareValue(templateInstance, subTemplates, value, index))
 }
 
@@ -50,7 +54,7 @@ function memoizedPrepareValue(
     subTemplates: SubTemplatesMap,
     value: any,
     index: number,
-): Node {
+): Node | Node[] {
     const currentFragment = templateInstance.dynamicFragments[index]
     if (value instanceof Array || !(currentFragment instanceof NodeFragment)) {
         return prepareValue(templateInstance, subTemplates, value, index)
@@ -71,7 +75,7 @@ function prepareValue(
     subTemplates: SubTemplatesMap,
     value: any,
     index: number,
-): Node {
+): Node | Node[] {
     if (
         value instanceof Node || // DOM nodes do not need any preparation
         // Only NodeFragments need the value converted to a DOM Node
@@ -106,7 +110,7 @@ function prepareArray(
     subTemplates: SubTemplatesMap,
     value: any[],
     index: number,
-): DocumentFragment {
+): Node | Node[] {
     const elements = value.flat(Number.POSITIVE_INFINITY)
     const templateDataElements: TemplateData[] = elements.filter((element) => element instanceof TemplateData)
     const newKeys = new Set(
@@ -136,10 +140,15 @@ function prepareArray(
         }
     }
 
-    const result = document.createDocumentFragment()
+    const result: Node[] = []
     for (const element of elements) {
         if (!(element instanceof TemplateData)) {
-            result.appendChild(prepareValue(templateInstance, subTemplates, element, -1))
+            const preparedValue = prepareValue(templateInstance, subTemplates, element, -1)
+            if (preparedValue instanceof Array) {
+                result.push(...preparedValue) // This will most likely never happen
+            } else {
+                result.push(preparedValue)
+            }
             continue
         }
         const {template} = getTemplateState(element)
@@ -158,9 +167,9 @@ function prepareArray(
             instanceState.subTemplates,
             element.placeholderValues,
         ))
-        result.appendChild(instanceState.templateInstance.asDocumentFragment)
+        result.push(...instanceState.templateInstance.dom)
     }
-    return result
+    return result.length === 1 ? result[0] : result
 }
 
 function getTemplateState(templateData: TemplateData): ITemplateState {
