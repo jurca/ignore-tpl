@@ -7,5 +7,10 @@
         "strictPropertyInitialization": true,
         "strictNullChecks": true,
         "target": "esnext"
-    }
+    },
+    "exclude": [
+        "__tests__",
+        "fragment/__tests__",
+        "dist"
+    ],
 }
