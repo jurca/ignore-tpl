@@ -46,19 +46,14 @@ export default class NodeFragment implements IDynamicFragment {
 
         const firstKeptLastValueNode = lastValue.filter((node) => valueAsSet.has(node))[0]
         if (firstKeptLastValueNode) {
-            const {childNodes} = container
-            // Unless we are traversing a very large node list, linear search is just fine. Also, interestingly enough,
-            // it appears that linear search of childNodes can be a lot faster than using binary search (because of the
-            // performance of the underlying DOM implementation) - see
-            // https://stackoverflow.com/questions/5913927/get-child-node-index#answer-44875786
-            const startingNodeIndex = Array.prototype.indexOf.call(childNodes, firstKeptLastValueNode)
-            let currentNodeIndex = startingNodeIndex
+            let currentNode = firstKeptLastValueNode
             for (const node of value) {
                 if (lastValueAsSet.has(node)) {
-                    if (childNodes[currentNodeIndex] !== node) {
-                        container.insertBefore(node, childNodes[currentNodeIndex])
+                    if (node !== currentNode) {
+                        container.insertBefore(node, currentNode)
+                    } else {
+                        currentNode = currentNode.nextSibling!
                     }
-                    currentNodeIndex++
                 }
             }
         }
