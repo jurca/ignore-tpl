@@ -68,6 +68,11 @@
                 injectNewElement(parseInt(document.getElementById('spliceIndex').value))
             }
 
+            function onRemoveElement() {
+                elements.splice(parseInt(document.getElementById('removeElement').value), 1)
+                updateUI()
+            }
+
             function onReverse() {
                 elements.reverse()
                 updateUI()
@@ -84,8 +89,10 @@
                     <button .onclick="${onPrependElement}">prepend element</button>
                         <button .onclick="${onAppendElement}">append element</button>
                         <button .onclick="${onSpliceElement}">splice element at position:</button>
-                        <button .onclick="${onReverse}">reverse elements</button>
                         <input type="number" value="1" id="spliceIndex">
+                        <button .onclick="${onRemoveElement}">remove element at position:</button>
+                        <input type="number" value="1" id="removeElement">
+                        <button .onclick="${onReverse}">reverse elements</button>
                         </div>
                     <ul>
                         ${elements.map(value => keyed(value)`
