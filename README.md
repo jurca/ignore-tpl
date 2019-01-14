@@ -1,7 +1,7 @@
 # ignore-tpl
 
 [![Build Status](https://travis-ci.org/jurca/ignore-tpl.svg?branch=master)](https://travis-ci.org/jurca/ignore-tpl)
-![npm](http://img.shields.io/npm/v/@jurca/-x-ignore-tpl.svg)](https://www.npmjs.com/package/@jurca/-x-ignore-tpl)
+[![npm](http://img.shields.io/npm/v/@jurca/-x-ignore-tpl.svg)](https://www.npmjs.com/package/@jurca/-x-ignore-tpl)
 [![License](https://img.shields.io/npm/l/@jurca/-x-ignore-tpl.svg)](LICENSE)
 
 The ignore-tpl is the DOM renderer for the
