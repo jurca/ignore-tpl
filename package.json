@@ -4,9 +4,12 @@
   "description": "VDOM-like declarative templating for dynamic DOM using ES6 template literals.",
   "main": "tpl.js",
   "scripts": {
+    "build": "rm -r dist; npm test && npm run compile && cp package.json README.md LICENSE dist/",
     "compile": "tsc --outDir dist",
     "test": "tslint --project . && jest",
-    "start:devserver": "serve"
+    "start:devserver": "serve",
+    "prepublishOnly": "echo 'Use npm run publish-package' && exit 1",
+    "publish": "npm run build && git push && git push --tags && npm publish --access=public --ignore-scripts dist/"
   },
   "repository": {
     "type": "git",
