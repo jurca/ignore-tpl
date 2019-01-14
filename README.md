@@ -5,8 +5,8 @@ The ignore-tpl is the DOM renderer for the
 declarative high-performance DOM rendering using ES6 tagged template literals
 instead of using code transpilation (which is used with
 [JSX](https://reactjs.org/docs/introducing-jsx.html)). Also, unlike JSX, you
-write actual HTML without the (no comments support, you are specifying
-properties instead of attributes, etc.).
+write actual HTML without the various gotchas (no comments support, you are
+specifying properties instead of attributes, etc.).
 
 ## Installation
 
