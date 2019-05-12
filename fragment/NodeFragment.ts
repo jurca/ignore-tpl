@@ -16,6 +16,14 @@ export default class NodeFragment implements IDynamicFragment {
         }
 
         if (value instanceof Array) {
+            for (const node of value) {
+                if (node instanceof DocumentFragment) {
+                    throw new TypeError(
+                        'Array values must not contain document fragments, instead inline the nodes inside the ' +
+                        'document frament directly into the array itself.',
+                    )
+                }
+            }
             this.setArrayValue(value)
         } else {
             this.unmountPreviousValue()
@@ -30,7 +38,7 @@ export default class NodeFragment implements IDynamicFragment {
 
     private setArrayValue(value: Node[]): void {
         const lastValue = this.lastValue instanceof Array ? this.lastValue : [this.lastValue]
-        if (lastValue[0] instanceof DocumentFragment) {
+        if (this.lastValue instanceof DocumentFragment) {
             this.unmountPreviousValue()
             lastValue.splice(0)
         }

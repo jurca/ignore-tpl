@@ -146,7 +146,7 @@ function prepareArray(
             const preparedValue = prepareValue(templateInstance, subTemplates, element, -1)
             if (preparedValue instanceof Array) {
                 result.push(...preparedValue) // This will most likely never happen
-            } else {
+            } else if (preparedValue !== EMPTY_FRAGMENT) {
                 result.push(preparedValue)
             }
             continue
