@@ -22,7 +22,9 @@ export default class Template {
         template.innerHTML = source.join(PLACEHOLDER)
         this.domTemplate = template.content
         const placeholders = Array.from(this.domTemplate.querySelectorAll(`[${PLACEHOLDER_ATTRIBUTE}]`))
-        this.hasDynamicRootNodes = placeholders.some((node) => node.parentNode === this.domTemplate)
+        this.hasDynamicRootNodes = placeholders.some(
+            (node) => node.parentNode === this.domTemplate && node.nodeName === PLACEHOLDER_NODE_NAME,
+        )
         this.dynamicFragments = setUpDynamicFragments(placeholders)
     }
 
