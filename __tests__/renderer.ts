@@ -237,24 +237,24 @@ describe('renderer', () => {
         render(document.createElement('div'), tpl`<div>${[keyed(0)`<p></p>`]}</div>`)
     })
 
-  if (!Array.prototype.flat) {
-    Array.prototype.flat = function(depth = 0) {
-      let result = []
-      let hasArrays = false
-      for (let i = 0; i < this.length; i++) {
-        result = result.concat(this[i])
-        if (this[i] instanceof Array) {
-          hasArrays = true
+    if (!('flat' in Array.prototype)) {
+        (Array.prototype as any).flat = function(depth = 0) {
+            let result = []
+            let hasArrays = false
+            for (let i = 0; i < this.length; i++) { // tslint:disable-line prefer-for-of
+                result = result.concat(this[i])
+                if (this[i] instanceof Array) {
+                    hasArrays = true
+                }
+            }
+
+            if (depth <= 0 || !hasArrays) {
+                return result
+            }
+
+            return (result as any).flat(depth - 1)
         }
-      }
-
-      if (depth <= 0 || !hasArrays) {
-        return result
-      }
-
-      return result.flat(depth - 1)
     }
-  }
 
     it('should cache the template instances by their keys in arrays rendered in node fragments', () => {
         const container = document.createElement('div')
