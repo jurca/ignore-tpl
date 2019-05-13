@@ -20,7 +20,7 @@ export default class NodeFragment implements IDynamicFragment {
                 if (node instanceof DocumentFragment) {
                     throw new TypeError(
                         'Array values must not contain document fragments, instead inline the nodes inside the ' +
-                        'document frament directly into the array itself.',
+                        'document fragment directly into the array itself.',
                     )
                 }
             }
