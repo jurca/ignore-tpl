@@ -1,6 +1,6 @@
 {
   "name": "@jurca/-x-ignore-tpl",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "VDOM-like declarative templating for dynamic DOM using ES6 template literals.",
   "main": "tpl.js",
   "scripts": {
