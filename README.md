@@ -67,7 +67,7 @@ const view = tpl`
     <div class="note">
         <img
             src="${
-                'Attributes with dynamic values must contain a template litarl ' +
+                'Attributes with dynamic values must contain a template literal ' +
                 'expression'
             }"
             alt="Mixing static attribute values with ${'dynamic parts'
@@ -143,7 +143,7 @@ const view = tpl`
 // The view variable contains only the provided template source and values,
 // templates are compiled lazily and only once.
 
-// Compiles the template, creates an instace for the #app container and
+// Compiles the template, creates an instance for the #app container and
 // renders it.
 render(document.getElementById('app'), view)
 // Creates another instance of the already compiled template for the #app2
@@ -214,5 +214,5 @@ syntax was way too verbose. Also, this project opted for using the
 [custom DOM parser](https://github.com/jurca/ignore.js/tree/0.0.x/template),
 resulting in a simpler and more efficient code, while sacrificing the support
 for setting `camelCase` properties declaratively (to be fair, those are
-usually reflectd by DOM attributes on native HTML elements, and custom
+usually reflected by DOM attributes on native HTML elements, and custom
 elements can simply use `lowercase` or `snake_case` property names).
