@@ -111,7 +111,7 @@ const view = tpl`
         Any DOM node may be injected: ${exampleNode}
     </p>
     <p>
-        Array that do not contain nested templates can be rendered easily as
+        Arrays that do not contain nested templates can be rendered easily as
         well: ${simpleData}<br>
         Note: Any array element that is not a template does not need any key
         and is keyed by its position in the array.
