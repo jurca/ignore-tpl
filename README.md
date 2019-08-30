@@ -24,9 +24,11 @@ npm i --save @jurca/-x-ignore-tpl
 ## Usage
 
 The project can be used in a modern browser (anything except for IE) without
-transpilation or polyfills. Usage in node.js requires transpilation (at least
-until the TypeScript compiler will support outputting .mjs files or node.js
-will allow the ES6 import/export syntax in .js files).
+transpilation or polyfills. Usage in node.js will require a DOM polyfill.
+
+The import paths in the following examples assume usage in a browser using the
+native ES module support and having `node_modules` available at the root (`/`)
+path of the website.
 
 ```javascript
 import keyed from '/node_modules/@jurca/-x-ignore-tpl/keyed.js'
