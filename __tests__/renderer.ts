@@ -445,4 +445,53 @@ describe('renderer', () => {
             `)
         }).toThrowError(Error)
     })
+
+    it('should correctly handle updates of flatly nested fragments', () => {
+        const container = document.createElement('div')
+        const items = [
+            {
+                content: '1',
+                id: 1,
+                isImportant: false,
+            },
+            {
+                content: '2',
+                id: 2,
+                isImportant: true,
+            },
+            {
+                content: '3',
+                id: 3,
+                isImportant: false,
+            },
+        ]
+
+        renderItems()
+        items.splice(2)
+        items.splice(1, 0, {
+            content: '4',
+            id: 4,
+            isImportant: false,
+        })
+        items.push({
+            content: '5',
+            id: 5,
+            isImportant: false,
+        })
+        renderItems()
+
+        function renderItems() {
+            render(container, tpl`
+                <ul>
+                    ${items.map((item) => keyed(item.id)`
+                        ${item.isImportant ?
+                            tpl`<li>${item.content}</li>`
+                        :
+                            tpl`<li><strong>${item.content}</strong></li>`
+                        }
+                    `)}
+                </ul>
+            `)
+        }
+    })
 })

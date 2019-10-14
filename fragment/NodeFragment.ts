@@ -47,7 +47,10 @@ export default class NodeFragment implements IDynamicFragment {
         const container = this.end.parentNode!
 
         for (const node of lastValue) {
-            if (!valueAsSet.has(node)) {
+            if (
+              node.parentNode && // Make sure the node has not been removed by a parent fragment
+              !valueAsSet.has(node)
+            ) {
                 container.removeChild(node)
             }
         }
