@@ -4,7 +4,7 @@ import NodeFragment from './fragment/NodeFragment.js'
 import PropertyFragment from './fragment/PropertyFragment.js'
 import TemplateInstance from './TemplateInstance.js'
 
-const PLACEHOLDER_PATTERN = 'x-ingore-tpl-placeholder'
+const PLACEHOLDER_PATTERN = 'x-ignore-tpl-placeholder'
 export const PLACEHOLDER_ATTRIBUTE = `data-${PLACEHOLDER_PATTERN}`
 const PLACEHOLDER_ELEMENT = `<${PLACEHOLDER_PATTERN} ${PLACEHOLDER_ATTRIBUTE}></${PLACEHOLDER_PATTERN}>`
 const PLACEHOLDER_NODE_NAME = PLACEHOLDER_PATTERN.toUpperCase()
