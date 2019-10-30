@@ -23,7 +23,7 @@ describe('Template', () => {
 
         const container = document.createElement('div')
         container.appendChild(template.domTemplate.cloneNode(true))
-        const placeholder = 'x-ingore-tpl-placeholder'
+        const placeholder = 'x-ignore-tpl-placeholder'
         const nodePlaceholder = `<${placeholder} data-${placeholder}=""></${placeholder}>`
         const attributePlaceholder = `<${placeholder} data-${placeholder}></${placeholder}>`
         expect(container.innerHTML).toBe(
